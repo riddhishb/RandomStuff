@@ -1,0 +1,18 @@
+3
+1 a
+1 b
+1 c
+3 ALL
+1 d
+3 ALL
+0 a
+0 b
+0 c
+3 ALL
+2 a
+0 a
+3 ALL
+0 c
+2 c
+0 c
+3 ALL

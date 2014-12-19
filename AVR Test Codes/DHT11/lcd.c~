@@ -1,3 +1,10 @@
+/*/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Created By: Riddhish Bhalodia
+
+Refrences: Davide Gironi
+	   Patrick Hood-Daniel
+
+*//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include <stdio.h>
 #include <string.h>
@@ -6,48 +13,66 @@
 
 #include "lcd.h"
 
-void Check_Busy()
-{
-	LCD_DDR = 0;
-	LCD_CONTROL_PORT |= 1<<RW;
-	LCD_CONTROL_PORT &= ~1<<RS;
 
-	while (LCD_PORT >= 0x80){
-		EN_Toggle();
+void Check_IF_MrLCD_isBusy()
+{
+	DataDir_MrLCDsCrib = 0;
+	MrLCDsControl |= 1<<ReadWrite;
+	MrLCDsControl &= ~1<<BiPolarMood;
+
+	while (MrLCDsCrib >= 0x80)
+	{
+	Peek_A_Boo();
 	}
-	LCD_DDR = 0xFF; 
+
+	DataDir_MrLCDsCrib = 0xFF; //0xFF means 0b11111111
 }
-void EN_Toggle()
+
+void Peek_A_Boo()
 {
-	LCD_CONTROL_PORT |= 1<<EN;
+	MrLCDsControl |= 1<<LightSwitch;
 	asm volatile ("nop");
 	asm volatile ("nop");
-	LCD_CONTROL_PORT &= ~1<<EN;
+	MrLCDsControl &= ~1<<LightSwitch;
 }
 
-void Send_A_Command(unsigned char command)
-{
-	Check_Busy();
-	LCD_PORT = command;
-	LCD_CONTROL_PORT &= ~ ((1<<RW)|(1<<RS));
-	EN_Toggle();
-	LCD_PORT = 0;
+void Send_A_Command(unsigned char command){
+	Check_IF_MrLCD_isBusy();
+	MrLCDsCrib = command;
+	MrLCDsControl &= ~ ((1<<ReadWrite)|(1<<BiPolarMood));
+	Peek_A_Boo();
+	MrLCDsCrib = 0;
 }
 
-void Send_A_Character(unsigned char character)
-{
-	Check_Busy();
-	LCD_PORT = character;
-	LCD_CONTROL_PORT &= ~ (1<<RW);
-	LCD_CONTROL_PORT |= 1<<RS;
-	EN_Toggle();
-	LCD_PORT = 0;
+void Send_A_Character(unsigned char character){
+	Check_IF_MrLCD_isBusy();
+	MrLCDsCrib = character;
+	MrLCDsControl &= ~ (1<<ReadWrite);
+	MrLCDsControl |= 1<<BiPolarMood;
+	Peek_A_Boo();
+	MrLCDsCrib = 0;
 }
 
-void Send_A_String(char *StringOfCharacters)
-{
+void Send_A_String(char *StringOfCharacters){
 	while(*StringOfCharacters > 0){
-		Send_A_Character(*StringOfCharacters++);
+	Send_A_Character(*StringOfCharacters++);
 	}
 }
 
+void GotoMrLCDsLocation(uint8_t x, uint8_t y)
+{
+Send_A_Command(0x80 + firstColumnPositionsForMrLCD[y-1] + (x-1));
+}
+
+void InitializeMrLCD()
+{
+DataDir_MrLCDsControl |= 1<<LightSwitch | 1<<ReadWrite | 1<<BiPolarMood;
+_delay_ms(15);
+
+Send_A_Command(0x01); //Clear Screen 0x01 = 00000001
+_delay_ms(2);
+Send_A_Command(0x38);
+_delay_us(50);
+Send_A_Command(0b00001110);
+_delay_us(50);
+}

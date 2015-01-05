@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.8)
+project( Vein )
+find_package( OpenCV REQUIRED )
+add_executable( Vein Vein.cpp )
+target_link_libraries( Vein ${OpenCV_LIBS} )

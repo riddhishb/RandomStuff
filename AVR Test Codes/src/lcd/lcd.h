@@ -18,8 +18,8 @@ Refrences: Davide Gironi
 #define LCD_CONTROL_PORT 		PORTD
 #define LCD_CONTROL_DDR 	        DDRD
 #define EN	 			5
-#define RW 		   		2
-#define RS 			        7
+#define RW 		   		7
+#define RS 			        2
 
 void Check_Busy(void);
 void EN_Toggle(void);

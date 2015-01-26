@@ -42,7 +42,12 @@ ISR(ADC_vect)
 	uint8_t theLowADC = ADCL;
 	uint16_t res = ADCH<<8 | theLowADC;
 	result = result + res;
-	count = count +1;		
+	Send_A_Command(0x01);
+        _delay_ms(2);
+        Send_A_String("Result = ");
+        Send_An_Integer(res,4);
+	_delay_ms(100);
+	/* count = count +1;
 	if(count == 1000){
 		PORTC ^= 1<<PINC0;
 		result = result/1000;	
@@ -52,14 +57,14 @@ ISR(ADC_vect)
 			answer = answer/2;
 			Send_A_Command(0x01);
 			_delay_ms(2);
-			Send_A_String("M.C = ");
+			Send_A_String("Result = ");
 			Send_An_Integer(answer,4);
 			avgcnt = 0;
 			answer = 0;
 		}		
 		result = 0;
 		count = 0;		
-	}
+	}*/
 	
 	_delay_ms(1);
 	ADCSRA |= 1<<ADSC;

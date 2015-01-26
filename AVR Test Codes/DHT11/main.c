@@ -63,7 +63,7 @@ int main(void){
 
 		} else {
 			// RED LED Lights if the sensor is not functioning properly.
-			PORTC |= 1<<PINC1;			
+			PORTC = PINC | 1<<PINC1;			
 		}
 
 		_delay_ms(1500);

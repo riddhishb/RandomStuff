@@ -1,4 +1,4 @@
-// LED Blink cod
+// LED Blink code
 
 #include <avr/io.h>
 #include <util/delay.h>

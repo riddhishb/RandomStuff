@@ -1,0 +1,163 @@
+// Finding the length of the pendulum video with orthographic projection
+
+/*//////////////////////////////////////////////////////////////////////
+Given Parameters
+1) The video
+2) The video is in orthographic projection
+3) The scale length of the image in real world => Height of frame  ~ 11inches
+///////////////////////////////////////////////////////////////////////*/
+
+#include <iostream>
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/core/core.hpp"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <fstream>
+#include <sstream>
+#include <string>
+
+using namespace std;
+using namespace cv;
+
+struct Values
+{
+	int cx;
+	int cy;
+	Mat img;
+};
+
+Values processing(Mat image){
+	Mat dst;
+	threshold( image, dst, 95, 255,1);
+	int dilation_size = 3;
+	Values val;
+	Mat element = getStructuringElement(MORPH_RECT ,Size( 2*dilation_size + 1, 2*dilation_size+1 ),Point( dilation_size, dilation_size ) );
+
+	erode( dst,dst, element );
+
+	for( int y = 0; y < dst.rows; y++ )
+    { 
+        for( int x = 0; x < dst.cols; x++ )
+        { 	
+        	if(x < 70){
+        	
+        	dst.at<uchar>(y,x) = 0;
+    		}
+        }
+    }
+
+    medianBlur(dst,dst,11);
+	Moments mu = moments(dst);
+
+      double area = mu.m00;
+      double x1 = mu.m10;
+      double y1 = mu.m01;
+      
+
+      
+    int c1 = x1/area;
+    int c2 = y1/area; 
+
+    circle(dst, Point(c1,c2),4, Scalar(0,0,0),CV_FILLED, 2,0);	
+    val.cx = c1;
+    val.cy = c2;
+    val.img = dst;
+
+    return val;
+}
+
+double dist(int x1,int y1,int x2,int y2){
+	double p = 0;
+	p = (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2);
+	p = sqrt(p);
+	return p;
+}
+
+int radius(int x1,int y1,int x2,int y2,int x3,int y3){
+	double A,B,C,s,R;
+	
+	// Three Sides
+	A = dist(x2,y2,x3,y3);
+	B = dist(x1,y1,x3,y3);
+	C = dist(x1,y1,x2,y2);
+
+	//Area
+	s = 0.5*((x1-x2)*(y2-y3) + (y1-y2)*(x2-x3));
+	s = abs(s);
+	// Calculating the circumradius
+	R = A*B*C;
+	R = R/(4*s);
+
+	return int(R);
+}
+
+int main(){
+
+	//////////////////////////////Getting the three frames/////////////////////////////////
+	Mat frame1,frame2,frame3,frame4;
+	
+	//int cx1,cx2,cx3,cx4;
+	//int cy1,cy2,cy3,cy4;
+
+	
+	frame1 = imread("frame1.png",1);
+	frame2 = imread("frame2.png",1);
+	frame3 = imread("frame3.png",1);
+	frame4 = imread("frame4.png",1);
+
+	cout << frame2.rows << endl;
+	////////////////////////////Enhancement and Thresholding///////////////////////////////
+
+	
+	Mat frame1_gray,frame2_gray,frame3_gray,frame4_gray;
+	cvtColor(frame1,frame1_gray,CV_RGB2GRAY);
+	blur(frame1_gray,frame1_gray,Size(3,3),Point(-1,-1));
+	
+	cvtColor(frame2,frame2_gray,CV_RGB2GRAY);
+	blur(frame2_gray,frame2_gray,Size(3,3),Point(-1,-1));
+	
+	cvtColor(frame3,frame3_gray,CV_RGB2GRAY);
+	blur(frame3_gray,frame3_gray,Size(3,3),Point(-1,-1));
+	
+	cvtColor(frame4,frame4_gray,CV_RGB2GRAY);
+	blur(frame4_gray,frame4_gray,Size(3,3),Point(-1,-1));
+	
+	imshow("Frame1_orig",frame4_gray);
+	
+	Values out1,out2,out3,out4;
+
+	out1 = processing(frame1_gray);
+	out2 = processing(frame2_gray);
+	out3 = processing(frame3_gray);
+	out4 = processing(frame4_gray);
+
+	imshow("Processed",out4.img);
+	cout<< out4.cx << "  " <<out4.cy << endl;
+
+	int R1,R2,R3,R4;
+	R1 = radius(out1.cx,out1.cy,out2.cx,out2.cy,out3.cx,out3.cy);
+	R2 = radius(out4.cx,out4.cy,out1.cx,out1.cy,out2.cx,out2.cy);
+	R3 = radius(out3.cx,out3.cy,out4.cx,out4.cy,out1.cx,out1.cy);
+	R4 = radius(out2.cx,out2.cy,out3.cx,out3.cy,out4.cx,out4.cy);
+
+	int Avg_length = 0;
+	Avg_length = R1+R2+R3+R4;	
+	Avg_length = Avg_length/4;
+
+	// Length of the radius in pixels
+	cout<<Avg_length<<endl;
+
+	// In inches
+	double length = 11*Avg_length;
+	length = length/480;
+
+	cout << "Approximated Length of The Pendulum :  " << length <<" inches"<< endl;
+	waitKey(0);
+	return 0;	
+
+}
+
+

@@ -13,10 +13,10 @@ Refrences: Davide Gironi
 #include <avr/io.h>
 
 //setup port
-#define DHT_DDR 	DDRD
-#define DHT_PORT 	PORTD
-#define DHT_PIN 	PIND
-#define DHT_INPUTPIN 	PD6
+#define DHT_DDR 	DDRB
+#define DHT_PORT 	PORTB
+#define DHT_PIN 	PINB
+#define DHT_INPUTPIN 	PB0
 
 //timeout retries
 #define DHT_TIMEOUT 200

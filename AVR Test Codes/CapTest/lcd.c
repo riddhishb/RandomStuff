@@ -11,31 +11,7 @@ Refrences: Patrick Hood-Daniel
 #include <util/delay.h>
 
 #include "lcd.h"
-int main(void){	
 
-	LCD_CONTROL_DDR |= 1<<EN | 1<<RW | 1<<RS;
-	_delay_ms(15);
-//	DDRB  |= 1<<PINB1;	
-//	DDRC |= 1<<PINC0 | 1<<PINC1 ;
-
-	Send_A_Command(0x01); //Clear Screen
-	_delay_ms(2);
-	Send_A_Command(0x38);
-	_delay_us(50);
-	Send_A_Command(0b00001110);
-	_delay_us(50);	
-
-	        Send_A_String("Riddhish");
-
-	while(1){ 
-//	PORTB ^= 1<<PORTB1;
-//	Send_A_String("Riddhish");
-//	_delay_ms(10000);
-//	Send_A_Command(0x01);
-//	_delay_ms(2);	
-	}
-	return 0;
-}
 void Check_Busy()
 {
 	LCD_DDR = 0;

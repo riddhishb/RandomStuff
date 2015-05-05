@@ -1,0 +1,1 @@
+/home/riddhish/Documents/Opencv/Paragraph1/build/CMakeFiles/Paragraph1.dir

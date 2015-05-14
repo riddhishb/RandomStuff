@@ -37,5 +37,4 @@ set /p test="Enter name of .c file : "
 	echo "Compilation Successful, Now Burning"
 
 	
-	avrdude -p m32 -c usbasp -U flash:w:%test%.hex
-:i
+	avrdude -p m32 -c usbasp -U flash:w:%test%.hex:i

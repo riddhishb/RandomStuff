@@ -13,7 +13,7 @@
 int main()
 {
 	unsigned char temp;
-	DDRB |= 1<<PINB0;			// Set PD0 as output
+	DDRB |= 1<<PINB0;			// Set PB0 as output
 	ACSR = 0x00; 			// Configured the Analog Comparator
 	while(1)
 	{

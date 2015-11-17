@@ -5,10 +5,10 @@
 
 int main(void)
 {
-	DDRD |= 1 << PIND6;
+	DDRB |= 1 << PINB0;
 	while (1)
 	{
-		PORTD ^= 1 << PIND6;
+		PORTB ^= 1 << PINB0;
 		_delay_ms(100);
 	}
 }

@@ -24,8 +24,8 @@ int main(void){
 	_delay_us(50);
 	Send_A_Command(0b00001110);
 	_delay_us(50);	
-
-	        Send_A_String("Riddhish");
+	Send_A_Command(0x83);
+	        Send_A_String("35");
 
 	while(1){ 
 //	PORTB ^= 1<<PORTB1;

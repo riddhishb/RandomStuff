@@ -12,13 +12,13 @@ Refrences: Patrick Hood-Daniel
 #include <avr/io.h>
 #include <util/delay.h>
 
-#define LCD_PORT 			PORTB
-#define LCD_DDR     			DDRB
-#define LCD_CONTROL_PORT 		PORTD
-#define LCD_CONTROL_DDR 	        DDRD
-#define EN	 			5
-#define RW 		   		7
-#define RS 			        2
+#define LCD_PORT 				PORTD
+#define LCD_DDR     			DDRD
+#define LCD_CONTROL_PORT 		PORTB
+#define LCD_CONTROL_DDR 	    DDRB
+#define EN	 					4
+#define RW 		   				5
+#define RS 			        	6
 
 
 void Check_Busy(void);

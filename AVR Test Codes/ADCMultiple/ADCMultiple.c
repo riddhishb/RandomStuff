@@ -5,6 +5,11 @@
 #include "lcd.c"
 
 uint16_t compare = 0;
+int count;
+uint16_t final = 0;
+int res = 0;
+int res_prev = 0;
+int res_prev_prev = 0;
 int main(void)
 {
 LCD_CONTROL_DDR |= 1<<EN | 1<<RW | 1<<RS;
@@ -20,15 +25,15 @@ LCD_CONTROL_DDR |= 1<<EN | 1<<RW | 1<<RS;
 
 
 ADCSRA |= 1<<ADPS2;
-ADMUX |= (1<<REFS0)|(0<<REFS1) ;
-//ADMUX |= (1<<REFS1);
+//ADMUX |= (1<<REFS0)|(1<<REFS1) ;
+ADMUX  = 0xC3;
 ADCSRA |= 1<<ADIE;
 ADCSRA |= 1<<ADEN;
 
 sei();
 
 ADCSRA |= 1<<ADSC;
-
+count = 0;
 while (1)
 {	
 
@@ -38,94 +43,115 @@ while (1)
 ISR(ADC_vect)
 {
    // PORTC = 0b00001000;
-uint8_t theLow = ADCL;
-uint16_t theTenBitResult = ADCH<<8 | theLow;
-
-//switch (ADMUX)
-//{
-//case 0x40:
-Send_A_Command(0x01);
+uint8_t theLow  ;
+uint16_t theTenBitResult;
+//ADMUX = 0xC1;
+//while(count<101){
+   theLow = ADCL;
+   theTenBitResult =ADCH<<8 | theLow;
+  // final = theTenBitResult + final;
+  // count = count + 1;
+//}
+//final = final/100;
+//final = 0;
+switch (ADMUX)
+{
+case 0xC3:
+      if(count<80){
+        final = final + theTenBitResult;
+        count++;
+      }
+      else{
+        final = final/81;
+        compare = final;
+        Send_A_Command(0x01);
         _delay_ms(2);
-        Send_An_Integer(theTenBitResult,4);
-	compare = ADCH<<8 | theLow;;
-       Send_A_String(",");
-//	_delay_ms(30);
-/*
-ADMUX = 0x41;
-break;
-case 0x41:
+	res = (47000/final);    // Gain of 2.2
+	if(res == 231){
+		Send_A_String("Conducting");
+		Send_A_Command(0xC0);
+		Send_A_String("Completely Wet");
+		//break;
+	}
+	else{
+	Send_An_Integer(final,4);
+	Send_A_String(", ");
+        Send_An_Integer(res,4);
+        Send_A_String("M ,");
+	Send_A_Command(0xC0);
+	if(res>300 && res_prev>300 && res_prev_prev >300){
+                Send_A_String("Safe Zone!");
+	}
+	if((res>200 && res<300) && (res_prev>200 && res_prev<300) && (res_prev_prev>200 && res_prev_prev<300)){
+		Send_A_String("Warning Zone!");
+	}
+	if(res<200 && res_prev<200 && res_prev_prev<200){
+                Send_A_String("Danger Zone!");
+	}
+	}
+	_delay_ms(250);
+        count = 0;
+	res_prev_prev = res_prev;
+	res_prev = res;
+//	final = 0;
+  }
 
-        _delay_ms(2);
-        
-        //Send_An_Integer(theTenBitResult,4);
-        //Send_A_String(",");
-//	_delay_ms(300);
-ADMUX = 0x42;
+//ADMUX = 0xC2;
+break;
+case 0xC2:
+
+	if(count<100){
+        	final = final + theTenBitResult;
+        	count++;
+      	}
+      	else{
+        	final = final/101;
+        	compare = final;
+     //   	Send_A_Command(0x01);
+     //   	_delay_ms(2);
+//		res = 47188/final; // gain of 4.7
+        	Send_An_Integer(final,4);
+        	Send_A_String("M ,");
+        	_delay_ms(300);
+        	count = 0;
+//		final = 0;
+  }
+
+ADMUX = 0xC1;
 break;
 
-case 0x42:
+//case 0xC2:
 //Send_A_Command(0xC0);
-       _delay_ms(2);
+  //     _delay_ms(2);
         
         //Send_An_Integer(theTenBitResult,4);
        // Send_A_String(",");
 
 //	_delay_ms(300);
-ADMUX = 0x43;
-break;
+//ADMUX = 0xC3;
+//break;
 
-case 0x43:
+//case 0xC3:
 
-        _delay_ms(2);
+  //      _delay_ms(2);
         
        // Send_An_Integer(theTenBitResult,4);
        // Send_A_String(",");
 
 	//_delay_ms(300);
-ADMUX = 0x40;
-break;
+//ADMUX = 0xC0;
+//break;
 default:
 //Default code
 break;
-}*/
+}
 
-Send_A_Command(0xC0);
-    _delay_ms(2);
-    Send_An_Integer(compare,4);
-    _delay_ms(200);
+//Send_A_Command(0xC0);
+  //  _delay_ms(2);
+    //Send_An_Integer(compare,4);
+    //_delay_ms(200);
     // Simple Processing of the compare value
     
 
-    if(compare < 102){
-        PORTC = 0b00000000;
-    }
-    else if((compare>102)&&(compare<204)){
-                
-                PORTC =0b00000001;
-    }
-    else if((compare>204)&&(compare<306)){ 
-     PORTC =0b00000010;
-        }
-    else if((compare>306)&&(compare<408)){ 
-               PORTC =0b00000011;
-        }
-    else if((compare>408)&&(compare<510)){ 
-                PORTC =0b01000000;
-        }
-    else if((compare>510)&&(compare<612)){ 
-               PORTC =0b01000001;
-        }
-    else if((compare>612)&&(compare<714)){ 
-               PORTC =0b01000010;
-        }
-    else if((compare>714)&&(compare<816)){ 
-              PORTC =0b01000011;
-        }
-    else if((compare>816)&&(compare<918)){ 
-              PORTC =0b10000000;
-        }
-    else if((compare>918)&&(compare<1025)){ 
-              PORTC =0b10000001;
-        }
  ADCSRA |= 1<<ADSC;
 }

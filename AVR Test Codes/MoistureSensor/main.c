@@ -37,6 +37,8 @@ int main(void)
 	}
 	return 0;
 }
+
+
 ISR(ADC_vect)
 {
 	uint8_t theLowADC = ADCL;

@@ -17,8 +17,8 @@ Refrences: Patrick Hood-Daniel
 #define LCD_CONTROL_PORT 		PORTB
 #define LCD_CONTROL_DDR 	        DDRB
 #define EN	 			4
-#define RW 		   		5
-#define RS 			        6
+#define RW 		   		3
+#define RS 			        2
 
 
 void Check_Busy(void);

@@ -1,0 +1,5 @@
+/home/riddhish/AndroidStudioProjects/Test/app/build/intermediates/classes/debug
+/home/riddhish/AndroidStudioProjects/Test/app/build/intermediates/pre-dexed/debug/support-annotations-22.0.0-b960fd8811391670cc662c6e68d3e09f25a5932a.jar
+/home/riddhish/AndroidStudioProjects/Test/app/build/intermediates/pre-dexed/debug/internal_impl-22.0.0-e20f40261728df5bc79043fbbf99f138af7c9441.jar
+/home/riddhish/AndroidStudioProjects/Test/app/build/intermediates/pre-dexed/debug/classes-574829a6a31032ac4d0578a5ecd4411cc080ab43.jar
+/home/riddhish/AndroidStudioProjects/Test/app/build/intermediates/pre-dexed/debug/classes-b7dbf56ca66d7decfe4c8ddf5ceba1f29e0cbdb5.jar
